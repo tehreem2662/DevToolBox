@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>URL Encoder / Decoder | DevToolBox</title>
+
+    <meta
+        name="description"
+        content="Encode and decode URLs and special characters quickly with DevToolBox."
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =====================================================
+           URL TOOL PAGE
+        ===================================================== */
+
+        .tool-page {
+            min-height: 100vh;
+            padding: 140px 20px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-page::before {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(0, 188, 212, 0.08);
+            border-radius: 50%;
+            filter: blur(100px);
+            top: 80px;
+            right: -180px;
+            pointer-events: none;
+        }
+
+        .tool-page::after {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(124, 92, 255, 0.07);
+            border-radius: 50%;
+            filter: blur(100px);
+            bottom: 100px;
+            left: -180px;
+            pointer-events: none;
+        }
+
+        .tool-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header */
+
+        .tool-header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .tool-icon-large {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 22px;
+            border-radius: 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 30px;
+
+            color: #5ce1e6;
+
+            background: rgba(0, 188, 212, 0.10);
+            border: 1px solid rgba(0, 188, 212, 0.25);
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.25),
+                inset 0 0 25px rgba(0, 188, 212, 0.04);
+        }
+
+        .tool-header h1 {
+            margin: 0 0 14px;
+
+            color: #f4f7fb;
+
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .tool-header h1 span {
+            color: #7c5cff;
+        }
+
+        .tool-header p {
+            max-width: 650px;
+            margin: 0 auto;
+
+            color: #7f8999;
+
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* Main Tool Card */
+
+        .url-tool-card {
+            background: rgba(16, 21, 31, 0.88);
+            border: 1px solid #222a38;
+            border-radius: 24px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.28),
+                inset 0 1px 0 rgba(255, 255, 255, 0.02);
+
+            backdrop-filter: blur(15px);
+        }
+
+        /* Textarea */
+
+        .url-field-group {
+            margin-bottom: 25px;
+        }
+
+        .url-field-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            margin-bottom: 10px;
+        }
+
+        .url-field-header label {
+            color: #c5ccd8;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .url-field-header span {
+            color: #7f8999;
+            font-size: 12px;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .url-textarea {
+            width: 100%;
+            min-height: 190px;
+
+            resize: vertical;
+
+            padding: 18px;
+
+            color: #f4f7fb;
+            background: #080b12;
+
+            border: 1px solid #2c3545;
+            border-radius: 14px;
+
+            outline: none;
+
+            font-family: "JetBrains Mono", monospace;
+            font-size: 14px;
+            line-height: 1.7;
+
+            transition: 0.25s ease;
+
+            box-sizing: border-box;
+        }
+
+        .url-textarea::placeholder {
+            color: #586273;
+        }
+
+        .url-textarea:focus {
+            border-color: #7c5cff;
+
+            box-shadow:
+                0 0 0 3px rgba(124, 92, 255, 0.10);
+        }
+
+        /* Buttons */
+
+        .url-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+
+            margin-bottom: 25px;
+        }
+
+        .url-btn {
+            min-height: 52px;
+
+            border: 1px solid #2c3545;
+            border-radius: 12px;
+
+            padding: 0 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
+            color: #c5ccd8;
+            background: #151b27;
+
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.25s ease;
+        }
+
+        .url-btn:hover {
+            transform: translateY(-2px);
+
+            color: #ffffff;
+
+            border-color: #7c5cff;
+
+            background: #1b2230;
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.20);
+        }
+
+        .url-btn.encode {
+            color: #ffffff;
+            background: #7c5cff;
+            border-color: #7c5cff;
+        }
+
+        .url-btn.encode:hover {
+            background: #6445e8;
+            border-color: #6445e8;
+        }
+
+        .url-btn.decode {
+            color: #ffffff;
+            background: #00a6b8;
+            border-color: #00a6b8;
+        }
+
+        .url-btn.decode:hover {
+            background: #008b9b;
+            border-color: #008b9b;
+        }
+
+        .url-btn.clear {
+            color: #ff8d8d;
+        }
+
+        .url-btn.clear:hover {
+            border-color: rgba(255, 100, 100, 0.45);
+            background: rgba(255, 80, 80, 0.06);
+        }
+
+        /* Result */
+
+        .url-result-box {
+            border: 1px solid #222a38;
+            border-radius: 16px;
+            background: #0c1018;
+            overflow: hidden;
+        }
+
+        .url-result-header {
+            min-height: 50px;
+
+            padding: 0 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            border-bottom: 1px solid #222a38;
+        }
+
+        .url-result-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            color: #c5ccd8;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .url-result-title i {
+            color: #5ce1e6;
+        }
+
+        .copy-url-btn {
+            border: none;
+            background: transparent;
+
+            color: #7f8999;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+        .copy-url-btn:hover {
+            color: #9a82ff;
+        }
+
+        .url-result {
+            min-height: 140px;
+
+            padding: 18px;
+
+            color: #c5ccd8;
+
+            font-family: "JetBrains Mono", monospace;
+            font-size: 14px;
+            line-height: 1.7;
+
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .url-result.empty {
+            color: #586273;
+        }
+
+        /* Status */
+
+        .url-status {
+            min-height: 24px;
+
+            margin-top: 15px;
+
+            text-align: center;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .url-status.success {
+            color: #63e6be;
+        }
+
+        .url-status.error {
+            color: #ff7b7b;
+        }
+
+        /* Info Cards */
+
+        .url-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+
+            margin-top: 25px;
+        }
+
+        .url-info-card {
+            padding: 20px;
+
+            border: 1px solid #222a38;
+            border-radius: 16px;
+
+            background: rgba(16, 21, 31, 0.65);
+        }
+
+        .url-info-card i {
+            color: #7c5cff;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .url-info-card h3 {
+            color: #f4f7fb;
+            font-size: 14px;
+            margin: 0 0 7px;
+        }
+
+        .url-info-card p {
+            color: #7f8999;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Back Link */
+
+        .back-home {
+            display: flex;
+            justify-content: center;
+
+            margin-top: 30px;
+        }
+
+        .back-home a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #7f8999;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            text-decoration: none;
+
+            transition: 0.2s ease;
+        }
+
+        .back-home a:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 700px) {
+
+            .tool-page {
+                padding-top: 115px;
+            }
+
+            .url-tool-card {
+                padding: 20px;
+            }
+
+            .url-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .url-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .tool-page {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .tool-icon-large {
+                width: 65px;
+                height: 65px;
+                font-size: 25px;
+            }
+
+            .tool-header h1 {
+                font-size: 32px;
+            }
+
+            .url-textarea {
+                min-height: 160px;
+            }
+
+            .url-tool-card {
+                border-radius: 18px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="container nav-container">
+
+        <a href="index.html" class="logo">
+            <span class="logo-symbol">&lt;/&gt;</span>
+            <span>DevToolBox</span>
+        </a>
+
+        <nav class="navbar">
+
+            <a href="index.html" class="nav-link">
+                Home
+            </a>
+
+            <a href="index.html#tools" class="nav-link active">
+                Tools
+            </a>
+
+            <a href="index.html#about" class="nav-link">
+                About
+            </a>
+
+        </nav>
+
+        <a href="index.html#tools" class="nav-button">
+            All Tools
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN TOOL
+===================================================== -->
+
+<main class="tool-page">
+
+    <div class="tool-wrapper">
+
+
+        <!-- Header -->
+
+        <div class="tool-header">
+
+            <div class="tool-icon-large">
+                <i class="fa-solid fa-link"></i>
+            </div>
+
+            <h1>
+                URL <span>Encoder / Decoder</span>
+            </h1>
+
+            <p>
+                Encode URLs for safe web transmission or decode
+                encoded URLs back into readable text.
+            </p>
+
+        </div>
+
+
+        <!-- Tool Card -->
+
+        <div class="url-tool-card">
+
+
+            <!-- Input -->
+
+            <div class="url-field-group">
+
+                <div class="url-field-header">
+
+                    <label for="urlInput">
+                        Enter URL or Text
+                    </label>
+
+                    <span>
+                        UTF-8 compatible
+                    </span>
+
+                </div>
+
+                <textarea
+                    id="urlInput"
+                    class="url-textarea"
+                    placeholder="https://example.com/search?q=hello world"
+                ></textarea>
+
+            </div>
+
+
+            <!-- Actions -->
+
+            <div class="url-actions">
+
+                <button
+                    type="button"
+                    id="encodeUrlBtn"
+                    class="url-btn encode"
+                >
+                    <i class="fa-solid fa-lock"></i>
+                    Encode URL
+                </button>
+
+                <button
+                    type="button"
+                    id="decodeUrlBtn"
+                    class="url-btn decode"
+                >
+                    <i class="fa-solid fa-unlock"></i>
+                    Decode URL
+                </button>
+
+                <button
+                    type="button"
+                    id="clearUrlBtn"
+                    class="url-btn clear"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                    Clear
+                </button>
+
+            </div>
+
+
+            <!-- Result -->
+
+            <div class="url-result-box">
+
+                <div class="url-result-header">
+
+                    <div class="url-result-title">
+
+                        <i class="fa-solid fa-terminal"></i>
+
+                        <span>
+                            Result
+                        </span>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="copyUrlBtn"
+                        class="copy-url-btn"
+                    >
+                        <i class="fa-regular fa-copy"></i>
+                        Copy
+                    </button>
+
+                </div>
+
+                <div
+                    id="urlResult"
+                    class="url-result empty"
+                >
+                    Your encoded or decoded result will appear here...
+                </div>
+
+            </div>
+
+
+            <!-- Status -->
+
+            <div
+                id="urlStatus"
+                class="url-status"
+            ></div>
+
+
+        </div>
+
+
+        <!-- Info -->
+
+        <div class="url-info-grid">
+
+            <div class="url-info-card">
+
+                <i class="fa-solid fa-lock"></i>
+
+                <h3>
+                    URL Encoding
+                </h3>
+
+                <p>
+                    Converts special characters into a safe format
+                    that can be transmitted through URLs.
+                </p>
+
+            </div>
+
+
+            <div class="url-info-card">
+
+                <i class="fa-solid fa-unlock"></i>
+
+                <h3>
+                    URL Decoding
+                </h3>
+
+                <p>
+                    Converts encoded URL characters back into
+                    their original readable form.
+                </p>
+
+            </div>
+
+
+            <div class="url-info-card">
+
+                <i class="fa-solid fa-globe"></i>
+
+                <h3>
+                    Browser Based
+                </h3>
+
+                <p>
+                    Everything happens directly in your browser.
+                    No data needs to be uploaded anywhere.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Back -->
+
+        <div class="back-home">
+
+            <a href="index.html#tools">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to all tools
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div class="container footer-container">
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="logo">
+                <span class="logo-symbol">&lt;/&gt;</span>
+                <span>DevToolBox</span>
+            </a>
+
+            <p>
+                Smart tools for developers and everyday
+                digital tasks.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="index.html#tools">
+                Tools
+            </a>
+
+            <a href="index.html#about">
+                About
+            </a>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 DevToolBox. Built with HTML, CSS & JavaScript.
+            </p>
+
+            <span>
+                <i class="fa-solid fa-code"></i>
+                Simple. Fast. Useful.
+            </span>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- Shared JavaScript -->
+<script src="script.js"></script>
+
+</body>
+</html>

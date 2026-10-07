@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Text Toolkit | DevToolBox</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ================================
+           TEXT TOOLKIT PAGE
+        ================================= */
+
+        .tool-page {
+            min-height: calc(100vh - 80px);
+            padding: 70px 20px;
+        }
+
+        .text-tool {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        .tool-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .tool-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: rgba(124, 92, 255, 0.12);
+            border: 1px solid rgba(124, 92, 255, 0.25);
+
+            font-size: 32px;
+        }
+
+        .tool-heading h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 12px;
+        }
+
+        .tool-heading p {
+            max-width: 650px;
+            margin: auto;
+
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Main Box */
+
+        .text-tool-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Text Area */
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 320px;
+
+            resize: vertical;
+
+            padding: 20px;
+
+            background: var(--bg-dark);
+
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+
+            outline: none;
+
+            color: var(--text-main);
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 15px;
+            line-height: 1.7;
+
+            transition: 0.3s ease;
+        }
+
+        .text-area::placeholder {
+            color: var(--text-muted);
+        }
+
+        .text-area:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 3px rgba(124, 92, 255, 0.08);
+        }
+
+        /* Statistics */
+
+        .statistics {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            padding: 18px;
+
+            background: rgba(255, 255, 255, 0.025);
+
+            border: 1px solid var(--border);
+
+            border-radius: 14px;
+
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+
+            color: var(--accent-light);
+
+            font-size: 24px;
+
+            font-weight: 700;
+
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+
+            font-size: 13px;
+        }
+
+        /* Buttons */
+
+        .actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            min-height: 52px;
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 13px;
+
+            background: var(--bg-card-light);
+
+            color: var(--text-main);
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.3s ease;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent);
+
+            color: var(--accent-light);
+
+            transform: translateY(-2px);
+        }
+
+        .action-btn.primary {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+
+            border-color: transparent;
+
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            color: white;
+
+            box-shadow:
+                0 10px 25px
+                rgba(124, 92, 255, 0.25);
+        }
+
+        /* Tool Info */
+
+        .tool-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-top: 25px;
+        }
+
+        .info-card {
+            padding: 18px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 14px;
+
+            background:
+                rgba(255, 255, 255, 0.02);
+        }
+
+        .info-card strong {
+            display: block;
+
+            color: var(--text-main);
+
+            margin-bottom: 7px;
+        }
+
+        .info-card span {
+            color: var(--text-muted);
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        /* Back */
+
+        .back-link {
+            display: block;
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: var(--text-muted);
+
+            text-decoration: none;
+
+            transition: 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent-light);
+        }
+
+        /* Responsive */
+
+        @media (max-width: 800px) {
+
+            .statistics {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .tool-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .text-tool-box {
+                padding: 20px;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+
+            .text-area {
+                min-height: 260px;
+            }
+
+        }
+
+        @media (max-width: 420px) {
+
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================================
+         HEADER
+    ================================= -->
+
+    <header class="site-header">
+
+        <div class="container nav-container">
+
+            <a href="index.html" class="logo">
+
+                <span class="logo-symbol">
+                    &lt;/&gt;
+                </span>
+
+                DevToolBox
+
+            </a>
+
+
+            <nav class="nav-menu">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="index.html#tools">
+                    Tools
+                </a>
+
+                <a href="index.html#about">
+                    About
+                </a>
+
+            </nav>
+
+
+            <a
+                href="index.html#tools"
+                class="nav-button"
+            >
+                All Tools
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================
+         TEXT TOOLKIT
+    ================================= -->
+
+    <main class="tool-page">
+
+        <div class="text-tool">
+
+
+            <!-- Heading -->
+
+            <div class="tool-heading">
+
+                <div class="tool-icon">
+                    📝
+                </div>
+
+                <h1>
+                    Text Toolkit
+                </h1>
+
+                <p>
+                    Analyze, clean and transform your text
+                    with a collection of simple and useful
+                    text utilities.
+                </p>
+
+            </div>
+
+
+            <!-- Main Tool -->
+
+            <div class="text-tool-box">
+
+
+                <!-- Text Area -->
+
+                <div class="textarea-wrapper">
+
+                    <textarea
+                        class="text-area"
+                        placeholder="Start typing or paste your text here..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Statistics -->
+
+                <div class="statistics">
+
+
+                    <div class="stat-box">
+
+                        <span
+                            class="stat-number"
+                            id="characterCount"
+                        >
+                            0
+                        </span>
+
+                        <span class="stat-label">
+                            Characters
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <span
+                            class="stat-number"
+                            id="wordCount"
+                        >
+                            0
+                        </span>
+
+                        <span class="stat-label">
+                            Words
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <span
+                            class="stat-number"
+                            id="lineCount"
+                        >
+                            0
+                        </span>
+
+                        <span class="stat-label">
+                            Lines
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <span
+                            class="stat-number"
+                            id="spaceCount"
+                        >
+                            0
+                        </span>
+
+                        <span class="stat-label">
+                            Spaces
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="actions">
+
+                    <button
+                        class="action-btn primary"
+                        id="uppercaseBtn"
+                        type="button"
+                    >
+                        UPPERCASE
+                    </button>
+
+
+                    <button
+                        class="action-btn"
+                        id="lowercaseBtn"
+                        type="button"
+                    >
+                        lowercase
+                    </button>
+
+
+                    <button
+                        class="action-btn"
+                        id="removeSpacesBtn"
+                        type="button"
+                    >
+                        Remove Extra Spaces
+                    </button>
+
+
+                    <button
+                        class="action-btn"
+                        id="copyTextBtn"
+                        type="button"
+                    >
+                        Copy Text
+                    </button>
+
+
+                    <button
+                        class="action-btn"
+                        id="clearTextBtn"
+                        type="button"
+                    >
+                        Clear Text
+                    </button>
+
+
+                    <button
+                        class="action-btn"
+                        id="capitalizeBtn"
+                        type="button"
+                    >
+                        Capitalize Words
+                    </button>
+
+                </div>
+
+
+                <!-- Information -->
+
+                <div class="tool-info">
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            Character Counter
+                        </strong>
+
+                        <span>
+                            Counts every character in
+                            your text instantly.
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            Word Counter
+                        </strong>
+
+                        <span>
+                            Quickly find the total number
+                            of words in your content.
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            Text Cleaner
+                        </strong>
+
+                        <span>
+                            Remove unnecessary spaces
+                            and clean your text.
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- Back -->
+
+            <a
+                href="index.html#tools"
+                class="back-link"
+            >
+                ← Back to DevToolBox
+            </a>
+
+
+        </div>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>

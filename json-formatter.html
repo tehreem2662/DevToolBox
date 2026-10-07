@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>JSON Formatter | DevToolBox</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ==========================================
+           JSON FORMATTER
+        ========================================== */
+
+        .tool-page {
+            min-height: calc(100vh - 80px);
+            padding: 70px 20px;
+        }
+
+        .json-tool {
+            width: 100%;
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        /* Heading */
+
+        .tool-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .tool-icon {
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: rgba(124, 92, 255, 0.12);
+
+            border: 1px solid
+                rgba(124, 92, 255, 0.25);
+
+            color: var(--accent-light);
+
+            font-family: "Courier New", monospace;
+
+            font-size: 25px;
+
+            font-weight: 700;
+        }
+
+        .tool-heading h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+
+            margin-bottom: 12px;
+        }
+
+        .tool-heading p {
+            max-width: 680px;
+
+            margin: auto;
+
+            color: var(--text-muted);
+
+            line-height: 1.7;
+        }
+
+        /* Main Box */
+
+        .json-tool-box {
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 24px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Editor */
+
+        .editor-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+        .editor-title {
+            color: var(--text-main);
+
+            font-size: 15px;
+
+            font-weight: 600;
+        }
+
+        .status {
+            font-size: 13px;
+
+            color: var(--text-muted);
+        }
+
+        .status.valid {
+            color: #6ee7a0;
+        }
+
+        .status.invalid {
+            color: #ff7d7d;
+        }
+
+        .json-input {
+            width: 100%;
+
+            min-height: 390px;
+
+            resize: vertical;
+
+            padding: 20px;
+
+            background: var(--bg-dark);
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 16px;
+
+            outline: none;
+
+            color: #cdd6e5;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            tab-size: 4;
+
+            transition: 0.3s ease;
+        }
+
+        .json-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .json-input:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(124, 92, 255, 0.08);
+        }
+
+        /* Buttons */
+
+        .json-actions {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .json-btn {
+            min-height: 52px;
+
+            border: 1px solid
+                var(--border-light);
+
+            border-radius: 13px;
+
+            background: var(--bg-card-light);
+
+            color: var(--text-main);
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.3s ease;
+        }
+
+        .json-btn:hover {
+            transform: translateY(-2px);
+
+            border-color: var(--accent);
+
+            color: var(--accent-light);
+        }
+
+        .json-btn.primary {
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+
+            border-color: transparent;
+
+            color: white;
+        }
+
+        .json-btn.primary:hover {
+            color: white;
+
+            box-shadow:
+                0 10px 25px
+                rgba(124, 92, 255, 0.25);
+        }
+
+        /* Result */
+
+        .result-section {
+            margin-top: 28px;
+        }
+
+        .result-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+        .result-title {
+            color: var(--text-main);
+
+            font-size: 15px;
+
+            font-weight: 600;
+        }
+
+        .result-box {
+            min-height: 250px;
+
+            padding: 20px;
+
+            background: var(--bg-dark);
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 16px;
+
+            color: #cdd6e5;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+
+            overflow-x: auto;
+        }
+
+        .result-placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Info Cards */
+
+        .json-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-top: 25px;
+        }
+
+        .info-card {
+            padding: 18px;
+
+            background:
+                rgba(255, 255, 255, 0.02);
+
+            border: 1px solid var(--border);
+
+            border-radius: 14px;
+        }
+
+        .info-card strong {
+            display: block;
+
+            color: var(--text-main);
+
+            margin-bottom: 7px;
+        }
+
+        .info-card span {
+            color: var(--text-muted);
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        /* Back */
+
+        .back-link {
+            display: block;
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: var(--text-muted);
+
+            text-decoration: none;
+
+            transition: 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent-light);
+        }
+
+        /* Responsive */
+
+        @media (max-width: 800px) {
+
+            .json-actions {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .json-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .json-tool-box {
+                padding: 20px;
+            }
+
+            .json-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .json-input {
+                min-height: 300px;
+            }
+
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         HEADER
+    ========================================== -->
+
+    <header class="site-header">
+
+        <div class="container nav-container">
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+
+                <span class="logo-symbol">
+                    &lt;/&gt;
+                </span>
+
+                DevToolBox
+
+            </a>
+
+
+            <nav class="nav-menu">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="index.html#tools">
+                    Tools
+                </a>
+
+                <a href="index.html#about">
+                    About
+                </a>
+
+            </nav>
+
+
+            <a
+                href="index.html#tools"
+                class="nav-button"
+            >
+                All Tools
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         JSON FORMATTER
+    ========================================== -->
+
+    <main class="tool-page">
+
+        <div class="json-tool">
+
+
+            <!-- Heading -->
+
+            <div class="tool-heading">
+
+                <div class="tool-icon">
+                    { }
+                </div>
+
+                <h1>
+                    JSON Formatter
+                </h1>
+
+                <p>
+                    Format, validate and minify JSON
+                    instantly with this simple
+                    developer-friendly utility.
+                </p>
+
+            </div>
+
+
+
+            <!-- Main Box -->
+
+            <div class="json-tool-box">
+
+
+                <!-- Editor Header -->
+
+                <div class="editor-header">
+
+                    <span class="editor-title">
+                        JSON Input
+                    </span>
+
+                    <span
+                        class="status"
+                        id="jsonStatus"
+                    >
+                        Ready
+                    </span>
+
+                </div>
+
+
+                <!-- JSON Input -->
+
+                <textarea
+                    class="json-input"
+                    id="jsonInput"
+                    placeholder='Paste your JSON here...
+
+Example:
+{
+    "name": "DevToolBox",
+    "version": 1,
+    "active": true
+}'
+                ></textarea>
+
+
+
+                <!-- Actions -->
+
+                <div class="json-actions">
+
+
+                    <button
+                        class="json-btn primary"
+                        id="formatJsonBtn"
+                        type="button"
+                    >
+                        Format JSON
+                    </button>
+
+
+                    <button
+                        class="json-btn"
+                        id="minifyJsonBtn"
+                        type="button"
+                    >
+                        Minify JSON
+                    </button>
+
+
+                    <button
+                        class="json-btn"
+                        id="validateJsonBtn"
+                        type="button"
+                    >
+                        Validate JSON
+                    </button>
+
+
+                    <button
+                        class="json-btn"
+                        id="copyJsonBtn"
+                        type="button"
+                    >
+                        Copy Result
+                    </button>
+
+
+                </div>
+
+
+
+                <!-- Result -->
+
+                <div class="result-section">
+
+
+                    <div class="result-header">
+
+                        <span class="result-title">
+                            Result
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="result-box"
+                        id="jsonResult"
+                    >
+
+                        <span class="result-placeholder">
+                            Your formatted JSON will appear here...
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- Information -->
+
+                <div class="json-info">
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            Format
+                        </strong>
+
+                        <span>
+                            Beautify JSON with clean
+                            indentation and readable
+                            structure.
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            Validate
+                        </strong>
+
+                        <span>
+                            Check whether your JSON
+                            syntax is valid or contains
+                            errors.
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            Minify
+                        </strong>
+
+                        <span>
+                            Remove unnecessary spaces
+                            to create compact JSON.
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- Back -->
+
+            <a
+                href="index.html#tools"
+                class="back-link"
+            >
+                ← Back to DevToolBox
+            </a>
+
+
+        </div>
+
+    </main>
+
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

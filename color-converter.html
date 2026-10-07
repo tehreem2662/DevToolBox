@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Color Converter | DevToolBox</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* ==========================================
+           COLOR CONVERTER
+        ========================================== */
+
+        .tool-page {
+            min-height: calc(100vh - 80px);
+            padding: 70px 20px;
+        }
+
+        .color-tool {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Heading */
+
+        .tool-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .tool-icon {
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: rgba(124, 92, 255, 0.12);
+
+            border: 1px solid
+                rgba(124, 92, 255, 0.25);
+
+            font-size: 32px;
+        }
+
+        .tool-heading h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 12px;
+        }
+
+        .tool-heading p {
+            max-width: 650px;
+            margin: auto;
+
+            color: var(--text-muted);
+
+            line-height: 1.7;
+        }
+
+        /* Main Box */
+
+        .color-tool-box {
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 24px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Color Preview */
+
+        .color-preview {
+            width: 100%;
+            height: 220px;
+
+            border-radius: 20px;
+
+            background: #7c5cff;
+
+            border: 1px solid var(--border-light);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 25px;
+
+            transition: 0.3s ease;
+        }
+
+        .preview-label {
+            padding: 12px 20px;
+
+            background: rgba(0, 0, 0, 0.35);
+
+            border: 1px solid
+                rgba(255, 255, 255, 0.15);
+
+            border-radius: 12px;
+
+            color: white;
+
+            font-family: "Courier New", monospace;
+
+            font-weight: 600;
+
+            backdrop-filter: blur(8px);
+        }
+
+        /* Input */
+
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        .input-label {
+            display: block;
+
+            margin-bottom: 10px;
+
+            color: var(--text-main);
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+        .hex-input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hex-input {
+            flex: 1;
+
+            min-height: 55px;
+
+            padding: 0 18px;
+
+            background: var(--bg-dark);
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 13px;
+
+            outline: none;
+
+            color: var(--text-main);
+
+            font-family: "Courier New", monospace;
+
+            font-size: 16px;
+
+            transition: 0.3s ease;
+        }
+
+        .hex-input:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(124, 92, 255, 0.08);
+        }
+
+        .color-picker {
+            width: 60px;
+            height: 55px;
+
+            padding: 4px;
+
+            background: var(--bg-dark);
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 13px;
+
+            cursor: pointer;
+        }
+
+        /* Conversion Cards */
+
+        .conversion-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+        .conversion-card {
+            padding: 22px;
+
+            background:
+                rgba(255, 255, 255, 0.025);
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+        }
+
+        .conversion-title {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+        .conversion-title span:first-child {
+            color: var(--text-main);
+
+            font-weight: 700;
+        }
+
+        .format-badge {
+            padding: 4px 8px;
+
+            border-radius: 6px;
+
+            background:
+                rgba(124, 92, 255, 0.12);
+
+            color: var(--accent-light);
+
+            font-size: 11px;
+
+            font-weight: 700;
+        }
+
+        .color-value {
+            min-height: 48px;
+
+            display: flex;
+
+            align-items: center;
+
+            padding: 0 13px;
+
+            background: var(--bg-dark);
+
+            border: 1px solid var(--border);
+
+            border-radius: 10px;
+
+            color: var(--text-light);
+
+            font-family: "Courier New", monospace;
+
+            font-size: 14px;
+
+            word-break: break-all;
+        }
+
+        .copy-color-btn {
+            width: 100%;
+
+            min-height: 42px;
+
+            margin-top: 10px;
+
+            background: transparent;
+
+            border: 1px solid var(--border-light);
+
+            border-radius: 10px;
+
+            color: var(--text-muted);
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            transition: 0.3s ease;
+        }
+
+        .copy-color-btn:hover {
+            border-color: var(--accent);
+
+            color: var(--accent-light);
+        }
+
+        /* Status */
+
+        .color-status {
+            margin-top: 20px;
+
+            text-align: center;
+
+            min-height: 22px;
+
+            color: var(--text-muted);
+
+            font-size: 13px;
+        }
+
+        .color-status.success {
+            color: #6ee7a0;
+        }
+
+        .color-status.error {
+            color: #ff7d7d;
+        }
+
+        /* Info */
+
+        .color-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-top: 25px;
+        }
+
+        .info-card {
+            padding: 18px;
+
+            background:
+                rgba(255, 255, 255, 0.02);
+
+            border: 1px solid var(--border);
+
+            border-radius: 14px;
+        }
+
+        .info-card strong {
+            display: block;
+
+            color: var(--text-main);
+
+            margin-bottom: 7px;
+        }
+
+        .info-card span {
+            color: var(--text-muted);
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        /* Back */
+
+        .back-link {
+            display: block;
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: var(--text-muted);
+
+            text-decoration: none;
+
+            transition: 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent-light);
+        }
+
+        /* Responsive */
+
+        @media (max-width: 800px) {
+
+            .conversion-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .color-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .color-tool-box {
+                padding: 20px;
+            }
+
+            .color-preview {
+                height: 170px;
+            }
+
+            .hex-input-wrapper {
+                flex-direction: column;
+            }
+
+            .color-picker {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         HEADER
+    ========================================== -->
+
+    <header class="site-header">
+
+        <div class="container nav-container">
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+
+                <span class="logo-symbol">
+                    &lt;/&gt;
+                </span>
+
+                DevToolBox
+
+            </a>
+
+
+            <nav class="nav-menu">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="index.html#tools">
+                    Tools
+                </a>
+
+                <a href="index.html#about">
+                    About
+                </a>
+
+            </nav>
+
+
+            <a
+                href="index.html#tools"
+                class="nav-button"
+            >
+                All Tools
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         COLOR CONVERTER
+    ========================================== -->
+
+    <main class="tool-page">
+
+        <div class="color-tool">
+
+
+            <!-- Heading -->
+
+            <div class="tool-heading">
+
+                <div class="tool-icon">
+                    🎨
+                </div>
+
+                <h1>
+                    Color Converter
+                </h1>
+
+                <p>
+                    Convert colors between HEX, RGB and
+                    HSL formats with a live visual preview.
+                </p>
+
+            </div>
+
+
+
+            <!-- Main Tool -->
+
+            <div class="color-tool-box">
+
+
+                <!-- Preview -->
+
+                <div
+                    class="color-preview"
+                    id="colorPreview"
+                >
+
+                    <span
+                        class="preview-label"
+                        id="previewLabel"
+                    >
+                        #7C5CFF
+                    </span>
+
+                </div>
+
+
+
+                <!-- Input -->
+
+                <div class="input-section">
+
+                    <label
+                        class="input-label"
+                        for="hexInput"
+                    >
+                        HEX Color
+                    </label>
+
+
+                    <div class="hex-input-wrapper">
+
+                        <input
+                            type="text"
+                            class="hex-input"
+                            id="hexInput"
+                            value="#7C5CFF"
+                            maxlength="7"
+                            placeholder="#7C5CFF"
+                        >
+
+
+                        <input
+                            type="color"
+                            class="color-picker"
+                            id="colorPicker"
+                            value="#7C5CFF"
+                            title="Choose a color"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Conversion Results -->
+
+                <div class="conversion-grid">
+
+
+                    <!-- HEX -->
+
+                    <div class="conversion-card">
+
+                        <div class="conversion-title">
+
+                            <span>
+                                HEX
+                            </span>
+
+                            <span class="format-badge">
+                                #HEX
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="color-value"
+                            id="hexValue"
+                        >
+                            #7C5CFF
+                        </div>
+
+
+                        <button
+                            class="copy-color-btn"
+                            data-target="hexValue"
+                            type="button"
+                        >
+                            Copy HEX
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- RGB -->
+
+                    <div class="conversion-card">
+
+                        <div class="conversion-title">
+
+                            <span>
+                                RGB
+                            </span>
+
+                            <span class="format-badge">
+                                RGB
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="color-value"
+                            id="rgbValue"
+                        >
+                            rgb(124, 92, 255)
+                        </div>
+
+
+                        <button
+                            class="copy-color-btn"
+                            data-target="rgbValue"
+                            type="button"
+                        >
+                            Copy RGB
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- HSL -->
+
+                    <div class="conversion-card">
+
+                        <div class="conversion-title">
+
+                            <span>
+                                HSL
+                            </span>
+
+                            <span class="format-badge">
+                                HSL
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="color-value"
+                            id="hslValue"
+                        >
+                            hsl(252, 100%, 68%)
+                        </div>
+
+
+                        <button
+                            class="copy-color-btn"
+                            data-target="hslValue"
+                            type="button"
+                        >
+                            Copy HSL
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- Status -->
+
+                <div
+                    class="color-status"
+                    id="colorStatus"
+                >
+                    Enter a HEX color to convert it.
+                </div>
+
+
+
+                <!-- Info -->
+
+                <div class="color-info">
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            HEX
+                        </strong>
+
+                        <span>
+                            Commonly used in websites
+                            and CSS for defining colors.
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            RGB
+                        </strong>
+
+                        <span>
+                            Represents colors using
+                            red, green and blue values.
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <strong>
+                            HSL
+                        </strong>
+
+                        <span>
+                            Defines colors using hue,
+                            saturation and lightness.
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Back -->
+
+            <a
+                href="index.html#tools"
+                class="back-link"
+            >
+                ← Back to DevToolBox
+            </a>
+
+
+        </div>
+
+    </main>
+
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
